@@ -1,0 +1,49 @@
+# The CLI recorder creates the directory agg. Do not sync this.
+# Prevent files from call graph caller.
+.callgraphignore
+
+node_modules/
+agg/
+tui-demo.gif.cast
+tui-demo.gif.gif
+coverage/*
+logging/*
+
+# Except for the build/docs subdirectory
+!/build/docs/
+# Ignore the whole build directory
+/build/
+
+
+*.class
+.gradle
+
+# IDEs
+.idea
+*.iml
+build/
+.classpath
+.project
+.settings/
+bin/
+.vscode/
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+!**/testdata/**/*.jar
+*.war
+*.ear
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# note: some other rules could/should be in your HOME .gitignore_global file
+# *~
+# .DS_Store
+
+# Exclude the pmd cache file from being synced.
+.pmd_cache

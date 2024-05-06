@@ -1,0 +1,143 @@
+plugins {
+	id 'java'
+	// Create a "fat" jar with all dependencies included.
+	id 'com.github.johnrengelman.shadow' version '8.1.1'
+
+	// Auto update the dependencies in this build.gradle file. To update, run:
+	//gradle dependencyUpdates
+	id 'com.github.ben-manes.versions' version '0.51.0'
+
+	// Allow using antler.
+	id 'antlr'
+
+	// Run code coverage.
+	id 'jacoco'
+	id 'com.diffplug.spotless' version "7.0.3"
+
+}
+
+// Ensure the main file is created and that is is executable with:
+// java -jar build/libs/template-java-project.jar
+jar {
+	manifest {
+		attributes 'Main-Class': 'com.clann.Main'
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+// This is for the umldoclet that auto-generates PlantUML diagrams of each class of each .java
+// file and embeds them in the HTML documentation.
+configurations {
+	umlDoclet
+}
+
+
+dependencies {
+	// Support running unit tests.
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+	testImplementation 'org.assertj:assertj-core:3.27.2'
+	testImplementation 'org.mockito:mockito-inline:5.2.0'
+
+	// Logging
+	implementation 'org.slf4j:slf4j-api:2.1.0-alpha1'
+	implementation 'ch.qos.logback:logback-classic:1.4.14'
+
+	// https://mvnrepository.com/artifact/org.apache.bcel/bcel
+	implementation("org.apache.bcel:bcel:6.10.0")
+
+	implementation 'org.jetbrains:annotations:24.0.1'
+
+	implementation 'info.picocli:picocli:4.7.5'
+
+	testImplementation "com.diffplug.selfie:selfie-runner-junit5:2.5.1"
+
+	// https://mvnrepository.com/artifact/org.ow2.asm/asm
+	implementation 'org.ow2.asm:asm:9.8'
+
+
+	// This is for the umldoclet that auto-generates PlantUML diagrams of each class of each .java
+	// file and embeds them in the HTML documentation.
+	umlDoclet "nl.talsmasoftware:umldoclet:2.2.1"
+}
+
+
+// This is for the umldoclet that auto-generates PlantUML diagrams of each class of each .java
+// file and embeds them in the HTML documentation.
+javadoc {
+	source = sourceSets.main.allJava
+	options.docletpath = configurations.umlDoclet.files.asType(List)
+	options.doclet = "nl.talsmasoftware.umldoclet.UMLDoclet"
+}
+
+test {
+	useJUnitPlatform()
+	testLogging {
+		// If a test asserts an error is thrown, the response of the code, e.g. "don't use --something
+		// for this CLI", is shown in the standardStreams. You do not want to see this every build.
+		showStandardStreams = false
+	}
+
+	environment project.properties.subMap(["selfie"]) // optional, see "Overwrite everything" below
+	inputs.files(fileTree("src/test") { // optional, improves up-to-date checking
+		include "**/*.ss"
+	})
+}
+
+// Ensure the main file of the project is ran after the build is compiled, if
+// the user runs task: gradle build runMain
+task runMain(type: JavaExec) {
+	description 'Runs the Main class after the build.'
+	mainClass = 'com.clann.Main'
+	classpath = sourceSets.main.runtimeClasspath
+}
+
+// Ensure a code coverage report is build in: build/reports/jacoco
+jacocoTestReport {
+	dependsOn test // tests are required to run before generating the report
+	reports {
+		xml.required = false
+		csv.required = false
+		html.outputLocation = layout.buildDirectory.dir('reports/jacoco')
+	}
+}
+check.dependsOn jacocoTestReport
+
+// Create a "fat" jar with all dependencies included.
+shadowJar {
+	mergeServiceFiles()
+}
+
+task setWrapperType(type: Wrapper) {
+	gradleVersion = '8.6'
+}
+
+spotless {
+	// optional: limit format enforcement to just the files changed by this feature branch
+//    ratchetFrom 'origin/main'
+
+	format 'misc', {
+		// define the files to apply `misc` to
+		target '*.gradle', '.gitattributes', '.gitignore'
+
+		// define the steps to apply to those files
+		trimTrailingWhitespace()
+		leadingSpacesToTabs() // or leadingTabsToSpaces. Takes an integer argument if you don't like 4
+		endWithNewline()
+	}
+	java {
+		// don't need to set target, it is inferred from java
+
+		// apply a specific flavor of google-java-format
+		googleJavaFormat('1.26.0').aosp().reflowLongStrings().skipJavadocFormatting()
+		// fix formatting of type annotations
+//        formatAnnotations()
+		// make sure every file has the following copyright header.
+		// optionally, Spotless can set copyright years by digging
+		// through git history (see "license" section below)
+//        licenseHeader '/* (C)$YEAR */'
+	}
+}

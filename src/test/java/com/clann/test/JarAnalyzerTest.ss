@@ -1,0 +1,32 @@
+╔═ collectAnnotations_Succeeds_GivenSourceDirWithAllAnnotationLevels ═╗
+
+- class: com.clann.test.testdata.sourceDirWithAllAnnotationLevels.TestAnnotationCritical
+	 - @java.lang.annotation.Target
+		 - [CLASS]
+	 - @java.lang.annotation.Retention
+		 - [CLASS]
+- class: com.clann.test.testdata.sourceDirWithAllAnnotationLevels.ClassWithAllAnnotationKinds$Inner
+	 - @com.clann.test.testdata.sourceDirWithAllAnnotationLevels.TestAnnotationNonCritical
+		 - [FIELD_TYPE_USE]
+	 - @java.lang.Deprecated
+		 - [CLASS]
+- class: com.clann.test.testdata.sourceDirWithAllAnnotationLevels.ClassWithAllAnnotationKinds
+	 - @java.lang.SafeVarargs
+		 - [METHOD]
+	 - @com.clann.test.testdata.sourceDirWithAllAnnotationLevels.TestAnnotationCritical
+		 - [CLASS_TYPE_USE_TYPE_PARAMETER, CLASS_TYPE_USE_TYPE_PARAMETER_BOUND, CLASS_TYPE_USE_EXTENDS, FIELD_TYPE_USE, METHOD_LOCAL_VARIABLE, METHOD_TRYCATCH, METHOD_TYPE_USE_TYPE_PARAMETER, METHOD_TYPE_USE_TYPE_PARAMETER_BOUND, METHOD_TYPE_USE_RETURN, METHOD_TYPE_USE_THROWS]
+	 - @com.clann.test.testdata.sourceDirWithAllAnnotationLevels.TestAnnotationNonCritical
+		 - [METHOD_LOCAL_VARIABLE, METHOD_TYPE_USE_RECEIVER]
+	 - @java.lang.Deprecated
+		 - [CLASS, FIELD, METHOD_PARAMETER]
+- class: com.clann.test.testdata.sourceDirWithAllAnnotationLevels.TestAnnotationSourceOnly
+	 - @java.lang.annotation.Target
+		 - [CLASS]
+	 - @java.lang.annotation.Retention
+		 - [CLASS]
+- class: com.clann.test.testdata.sourceDirWithAllAnnotationLevels.TestAnnotationNonCritical
+	 - @java.lang.annotation.Target
+		 - [CLASS]
+	 - @java.lang.annotation.Retention
+		 - [CLASS]
+╔═ [end of file] ═╗
